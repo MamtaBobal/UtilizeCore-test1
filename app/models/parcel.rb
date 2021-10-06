@@ -11,7 +11,7 @@ class Parcel < ApplicationRecord
 	belongs_to :sender, class_name: 'User'
 	belongs_to :receiver, class_name: 'User'
 
-	after_create :send_notification
+	after_commit :send_notification, on: :create
 
 	private
 

@@ -3,7 +3,7 @@ class AddressesController < ApplicationController
 
   # GET /addresses or /addresses.json
   def index
-    @addresses = Address.all
+    @addresses = Address.paginate(page: params[:page], per_page: 10)
   end
 
   # GET /addresses/1 or /addresses/1.json

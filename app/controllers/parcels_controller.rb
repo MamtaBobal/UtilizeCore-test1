@@ -3,7 +3,8 @@ class ParcelsController < ApplicationController
 
   # GET /parcels or /parcels.json
   def index
-    @parcels = Parcel.all
+    @parcels = Parcel.includes(:sender, :receiver, :service_type)
+                     .paginate(page: params[:page], per_page: 10)
   end
 
   # GET /parcels/1 or /parcels/1.json
@@ -13,14 +14,10 @@ class ParcelsController < ApplicationController
   # GET /parcels/new
   def new
     @parcel = Parcel.new
-    @users = User.all.map{|user| [user.name_with_address, user.id]}
-    @service_types = ServiceType.all.map{|service_type| [service_type.name, service_type.id]}
   end
 
   # GET /parcels/1/edit
   def edit
-    @users = User.all.map{|user| [user.name_with_address, user.id]}
-    @service_types = ServiceType.all.map{|service_type| [service_type.name, service_type.id]}
   end
 
   # POST /parcels or /parcels.json
@@ -32,11 +29,7 @@ class ParcelsController < ApplicationController
         format.html { redirect_to @parcel, notice: 'Parcel was successfully created.' }
         format.json { render :show, status: :created, location: @parcel }
       else
-        format.html do
-          @users = User.all.map{|user| [user.name_with_address, user.id]}
-          @service_types = ServiceType.all.map{|service_type| [service_type.name, service_type.id]} 
-          render :new, status: :unprocessable_entity
-        end
+        format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @parcel.errors, status: :unprocessable_entity }
       end
     end
