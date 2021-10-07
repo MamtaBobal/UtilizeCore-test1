@@ -1,0 +1,16 @@
+# frozen_string_literal: true
+
+wb = xlsx_package.workbook
+
+wb.styles do |style|
+  project_heading = style.add_style(b: true, sz: 14)
+  heading = style.add_style(b: true)
+
+  wb.add_worksheet(name: 'Items') do |sheet|
+    sheet.add_row %w[weight status service payment_mode cost sender receiver], style: heading
+    parcels.each do |item|
+      sheet.add_row [item.weight, item.status, item.service_type.name, item.payment_mode, item.cost, item.sender.name,
+                     item.receiver.name]
+    end
+  end
+end

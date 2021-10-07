@@ -30,6 +30,15 @@ gem 'pg', '~> 1.2', '>= 1.2.3'
 
 gem 'will_paginate', '~> 3.3'
 
+gem 'devise'
+
+gem 'cancancan'
+
+gem 'whenever', require: false
+
+gem 'caxlsx'
+gem 'caxlsx_rails'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]

@@ -1,10 +1,19 @@
 class ParcelsController < ApplicationController
   before_action :set_parcel, only: %i[ show edit update destroy ]
+  load_and_authorize_resource
 
   # GET /parcels or /parcels.json
   def index
-    @parcels = Parcel.includes(:sender, :receiver, :service_type)
+    if current_user.admin?
+      @parcels = Parcel.includes(:sender, :receiver, :service_type)
                      .paginate(page: params[:page], per_page: 10)
+    else
+      @parcels = Parcel.includes(:sender, :receiver, :service_type)
+                       .where(sender_id: current_user.id)
+                       .or(Parcel.includes(:sender, :receiver, :service_type)
+                       .where(receiver_id: current_user.id))
+                       .paginate(page: params[:page], per_page: 10)
+    end
   end
 
   # GET /parcels/1 or /parcels/1.json
@@ -54,6 +63,15 @@ class ParcelsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to parcels_url, notice: 'Parcel was successfully destroyed.' }
       format.json { head :no_content }
+    end
+  end
+
+  def download_courier_report
+    file_name = 'download_courier_report.xls'
+    temporary_file_path = "#{Rails.root}/app/views/parcels/#{file_name}"
+    if File.exist?(temporary_file_path)
+      file = File.open(temporary_file_path)
+      send_data file.read, filename: file_name
     end
   end
 
